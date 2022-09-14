@@ -1,0 +1,15 @@
+/test/**
+/integration/**
+/src/**
+docker-compose.yml
+jasmine*.json
+tsconfig*.json
+.editorconfig
+.eslintrc.json
+typescript.js
+*.log
+.nyc_output
+
+# IDE
+.vscode
+.idea

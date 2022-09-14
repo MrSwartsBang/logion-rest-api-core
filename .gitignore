@@ -1,0 +1,18 @@
+# Core
+node_modules
+dist/
+*.log
+*.tgz
+.nyc_output
+
+# IDE
+.vscode
+.idea
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
