@@ -21,7 +21,7 @@ import { AuthenticateRequestView, AuthenticateResponseView, RefreshRequestView, 
 import { Log } from './Logging';
 const { logger } = Log;
 
-export function fillInSpec(spec: OpenAPIV3.Document): void {
+export function fillInSpecForAuthenticationController(spec: OpenAPIV3.Document): void {
     const tagName = 'Authentication';
     addTag(spec, {
         name: tagName,
