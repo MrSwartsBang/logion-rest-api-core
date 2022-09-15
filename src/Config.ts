@@ -2,7 +2,7 @@ import "./inversify.decorate";
 import { OpenAPIV3 } from 'express-oas-generator';
 import { Container } from 'inversify';
 import { schemas } from './ApiTypes';
-import { AuthenticationController, fillInSpec } from './AuthenticationController';
+import { AuthenticationController, fillInSpecForAuthenticationController } from './AuthenticationController';
 import { AuthenticationService } from './AuthenticationService';
 import { AuthenticationSystemFactory } from './AuthenticationSystemFactory';
 import { addSchema } from './OpenApi';
@@ -11,6 +11,7 @@ import { Dino } from "dinoloop";
 import { ApplicationErrorController } from "./ApplicationErrorController";
 import { JsonResponse } from "./JsonResponse";
 import { PolkadotService } from "./PolkadotService";
+import { fillInSpecForHealthController, HealthController } from "./HealthController";
 
 export function configureContainer(container: Container) {
     container.bind(SessionRepository).toSelf();
@@ -22,10 +23,12 @@ export function configureContainer(container: Container) {
 
     container.bind(ApplicationErrorController).toSelf().inTransientScope();
     container.bind(AuthenticationController).toSelf().inTransientScope();
+    container.bind(HealthController).toSelf().inTransientScope();
 }
 
 export function configureOpenApi(spec: OpenAPIV3.Document) {
-    fillInSpec(spec);
+    fillInSpecForAuthenticationController(spec);
+    fillInSpecForHealthController(spec);
 
     Object.keys(schemas).forEach(schemaName =>
         addSchema(spec, schemaName, schemas[schemaName]));
@@ -33,6 +36,7 @@ export function configureOpenApi(spec: OpenAPIV3.Document) {
 
 export function configureDinoloop(dino: Dino) {
     dino.registerController(AuthenticationController);
+    dino.registerController(HealthController);
     dino.registerApplicationError(ApplicationErrorController);
     dino.requestEnd(JsonResponse);
 }

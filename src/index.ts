@@ -6,6 +6,7 @@ export * from "./AuthenticationSystemFactory";
 export * from "./Config";
 export * from "./DataSourceProvider";
 export * from "./Errors";
+export * from "./HealthController";
 export * from "./Logging";
 export * from "./LogionNamingStrategy";
 export * from "./OpenApi";
