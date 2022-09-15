@@ -61,8 +61,8 @@ export interface AuthenticationServiceMock {
     ensureAuthorizationBearer: () => void;
 }
 
-export function mockAuthenticationWithCondition(conditionFulfilled: boolean): AuthenticationServiceMock {
-    const authenticatedUser = mockAuthenticatedUser(conditionFulfilled);
+export function mockAuthenticationWithCondition(conditionFulfilled: boolean, address?: string): AuthenticationServiceMock {
+    const authenticatedUser = mockAuthenticatedUser(conditionFulfilled, address);
     const ensureAuthorizationBearerMock = () => {
         if (!conditionFulfilled) {
             throw new UnauthorizedException();
@@ -91,8 +91,9 @@ function throwOrReturn(condition: boolean, authenticatedUser: AuthenticatedUser)
     };
 }
 
-export function mockAuthenticationForUserOrLegalOfficer(isLegalOfficer: boolean) {
+export function mockAuthenticationForUserOrLegalOfficer(isLegalOfficer: boolean, address?: string) {
     const authenticatedUser = new Mock<AuthenticatedUser>();
+    authenticatedUser.setup(instance => instance.address).returns(address || ALICE);
     authenticatedUser.setup(instance => instance.is).returns(() => true);
     authenticatedUser.setup(instance => instance.isOneOf).returns(() => true);
     authenticatedUser.setup(instance => instance.require).returns((predicate) => {
@@ -103,6 +104,7 @@ export function mockAuthenticationForUserOrLegalOfficer(isLegalOfficer: boolean)
         }
     });
     authenticatedUser.setup(instance => instance.isNodeOwner()).returns(isLegalOfficer);
+    authenticatedUser.setup(instance => instance.isLegalOfficer()).returnsAsync(isLegalOfficer);
     return mockAuthenticationWithAuthenticatedUser(authenticatedUser.object());
 }
 
@@ -131,6 +133,7 @@ export function mockAuthenticatedUser(conditionFulfilled: boolean, address?: str
         }
     });
     authenticatedUser.setup(instance => instance.isNodeOwner).returns(() => conditionFulfilled);
+    authenticatedUser.setup(instance => instance.isLegalOfficer()).returnsAsync(conditionFulfilled);
     return authenticatedUser.object();
 }
 
