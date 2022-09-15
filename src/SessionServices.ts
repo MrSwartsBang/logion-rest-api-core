@@ -1,22 +1,10 @@
-import { Entity, Column, PrimaryColumn, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { injectable } from "inversify";
 
 import { appDataSource } from "./DataSourceProvider";
 import { DateTime } from "luxon";
 import { requireDefined } from "./Assertions";
-
-@Entity("session")
-export class SessionAggregateRoot {
-
-    @PrimaryColumn({ length: 255, name: "user_address" })
-    userAddress?: string;
-
-    @Column({ name: "session_id", type: "uuid" })
-    sessionId?: string;
-
-    @Column("timestamp without time zone", { name: "created_on", nullable: true })
-    createdOn?: Date;
-}
+import { SessionAggregateRoot } from "./SessionEntity";
 
 @injectable()
 export class SessionRepository {

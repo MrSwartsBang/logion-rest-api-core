@@ -5,7 +5,7 @@ import { injectable } from "inversify";
 import { DateTime } from "luxon";
 
 import { AuthenticationService } from "./AuthenticationService";
-import { SessionRepository, SessionFactory } from "./Session";
+import { SessionRepository, SessionFactory } from "./SessionServices";
 import { requireDefined } from "./Assertions";
 import {
     getRequestBody,

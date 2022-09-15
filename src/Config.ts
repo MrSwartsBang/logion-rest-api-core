@@ -6,7 +6,7 @@ import { AuthenticationController, fillInSpec } from './AuthenticationController
 import { AuthenticationService } from './AuthenticationService';
 import { AuthenticationSystemFactory } from './AuthenticationSystemFactory';
 import { addSchema } from './OpenApi';
-import { SessionFactory, SessionRepository } from './Session';
+import { SessionFactory, SessionRepository } from './SessionServices';
 import { Dino } from "dinoloop";
 import { ApplicationErrorController } from "./ApplicationErrorController";
 import { JsonResponse } from "./JsonResponse";

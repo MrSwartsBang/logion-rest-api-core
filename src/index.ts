@@ -10,6 +10,7 @@ export * from "./Logging";
 export * from "./LogionNamingStrategy";
 export * from "./OpenApi";
 export * from "./PolkadotService";
-export * from "./Session";
+export * from "./SessionEntity";
+export * from "./SessionServices";
 export * as TestApp from "./TestApp";
 export * as TestDb from "./TestDb";

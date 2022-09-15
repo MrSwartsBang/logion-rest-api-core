@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { existsSync, readFileSync } from "fs";
 
 import { LogionNamingStrategy } from "./LogionNamingStrategy";
-import { SessionAggregateRoot } from "./Session";
+import { SessionAggregateRoot } from "./SessionEntity";
 
 dotenv.config();
 
