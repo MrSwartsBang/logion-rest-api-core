@@ -116,7 +116,7 @@ export class AuthenticationController extends ApiController {
             const signature = authenticateRequest.signatures[address];
             signatures[address] = {
                 signature: requireDefined(signature.signature),
-                signedOn: DateTime.fromISO(requireDefined(signature.signedOn), { setZone: true }),
+                signedOn: requireDefined(signature.signedOn),
                 type: requireDefined(signature.type),
             };
         }

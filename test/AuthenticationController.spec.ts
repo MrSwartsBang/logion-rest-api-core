@@ -172,12 +172,12 @@ function mockDependenciesForAuth(container: Container, verifies: boolean, sessio
         const signatures: Record<string, SessionSignature> = {
             [ ALICE ]: {
                 signature: "SIG_ALICE",
-                signedOn: DateTime.now(),
+                signedOn: DateTime.now().toISO(),
                 type: "POLKADOT",
             },
             [ BOB ]: {
                 signature: "SIG_BOB",
-                signedOn: DateTime.now(),
+                signedOn: DateTime.now().toISO(),
                 type: "POLKADOT",
             }
         };
