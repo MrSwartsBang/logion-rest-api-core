@@ -2,8 +2,6 @@ import "./inversify.decorate";
 import { DateTime } from "luxon";
 import { AuthenticatedUser, AuthenticationSystem, Authenticator, SessionManager } from '@logion/authenticator';
 import express, { Express } from 'express';
-import bodyParser from 'body-parser';
-import fileUpload from 'express-fileupload';
 import { Dino } from 'dinoloop';
 import { Container } from 'inversify';
 import { ApplicationErrorController } from './ApplicationErrorController';
@@ -11,6 +9,7 @@ import { JsonResponse } from './JsonResponse';
 import { Mock } from "moq.ts";
 import { AuthenticationService } from "./AuthenticationService";
 import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions";
+import { buildBaseExpress } from "./Express";
 
 export const ALICE = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY";
 export const BOB = "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty";
@@ -21,15 +20,16 @@ export function setupApp<T>(
     mockBinder: (container: Container) => void,
     mock?: AuthenticationServiceMock,
 ): Express {
+    return setupCustomApp(buildBaseExpress, controller, mockBinder, mock);
+}
 
-    const app = express();
-    app.use(bodyParser.json());
-    app.use(fileUpload({
-        limits: { fileSize: 50 * 1024 * 1024 },
-        useTempFiles : true,
-        tempFileDir : '/tmp/',
-    }));
-
+export function setupCustomApp<T>(
+    expressFactory: () => Express,
+    controller: Function & { prototype: T; }, // eslint-disable-line @typescript-eslint/ban-types
+    mockBinder: (container: Container) => void,
+    mock?: AuthenticationServiceMock,
+): Express {
+    const app = expressFactory();
     const dino = new Dino(app, '/api');
 
     dino.useRouter(() => express.Router());
