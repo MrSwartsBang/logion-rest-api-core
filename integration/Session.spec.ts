@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
 import { connect, executeScript, disconnect, checkNumOfRows } from "../src/TestDb";
 import { DefaultTransactional, SessionAggregateRoot, SessionRepository } from "../src";
-import { runOnTransactionCommit } from "typeorm-transactional";
+import { runOnTransactionCommit, runOnTransactionRollback } from "typeorm-transactional";
 
 const userAddress = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
 const existingSessionId = '0d9c1ca7-a2c5-48f7-b0fb-e66a977bc7b5';
@@ -36,8 +36,6 @@ describe('SessionRepository (read)', () => {
         const session = await repository.find('unknown', existingSessionId);
         expect(session).toBe(null);
     })
-
-    
 })
 
 describe('SessionRepository (write)', () => {
@@ -85,6 +83,20 @@ describe('SessionRepository (write)', () => {
                               WHERE session_id = '${ session.sessionId }'`, 0);
         expect(transactionHandler.successfulCommit).toBe(true);
     })
+
+    it("rollback on exception in handler", async () => {
+        const session = new SessionAggregateRoot();
+        session.userAddress = "5Ff2hkmpSZvgbj7aasT8Webo8hWUHdDGR74JqLUGQwFyhG6r";
+        session.sessionId = anotherExistingSessionId
+        session.createdOn = DateTime.now().toJSDate()
+
+        await expectAsync(transactionHandler.failureOnDelete(session)).toBeRejectedWithError("expected failure");
+
+        await checkNumOfRows(`SELECT *
+                              FROM session
+                              WHERE session_id = '${ session.sessionId }'`, 1);
+        expect(transactionHandler.rollback).toBe(true);
+    })
 });
 
 class TransactionHandler {
@@ -101,6 +113,12 @@ class TransactionHandler {
 
     private _successfulCommit: boolean | undefined;
 
+    get rollback(): boolean {
+        return this._rollback || false;
+    }
+
+    private _rollback: boolean | undefined;
+
     @DefaultTransactional()
     async saveSession(session: SessionAggregateRoot) {
         runOnTransactionCommit(() => this._successfulCommit = true);
@@ -111,5 +129,16 @@ class TransactionHandler {
     async deleteSession(session: SessionAggregateRoot) {
         runOnTransactionCommit(() => this._successfulCommit = true);
         await this.repository.delete(session);
+    }
+
+    @DefaultTransactional()
+    async failureOnDelete(session: SessionAggregateRoot) {
+        runOnTransactionRollback(() => this._rollback = true);
+        this.throwError();
+        await this.repository.delete(session);
+    }
+
+    private throwError() {
+        throw new Error("expected failure");
     }
 }
