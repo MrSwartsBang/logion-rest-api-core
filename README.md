@@ -40,3 +40,19 @@ Below call binds all provided services in the container.
 const container: Container = ...;
 configureContainer(container);
 ```
+
+### TypeORM
+
+Simply import the app's data source:
+
+```typescript
+import { appDataSource } from "@logion/rest-api-core";
+```
+
+The returned data source is configured using `ormconfig.json` file and `TYPEORM_*` environment variables.
+This is essentially a re-implementation of the way TypeORM used to be configured before the introduction
+of the multiple data source feature.
+
+The returned data source is ready to be used with a transaction context. `DefaultTransactional` method
+decorator can be used to set a transaction context with default settings. `typeorm-transactional`'s
+`Transactional` decorator may also be used safely.

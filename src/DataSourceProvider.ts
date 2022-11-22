@@ -1,9 +1,11 @@
 import { DataSource, DataSourceOptions } from "typeorm";
+import { addTransactionalDataSource, deleteDataSourceByName, initializeTransactionalContext, IsolationLevel, Transactional } from 'typeorm-transactional';
 import dotenv from "dotenv";
 import { existsSync, readFileSync } from "fs";
 
 import { LogionNamingStrategy } from "./LogionNamingStrategy";
 import { SessionAggregateRoot } from "./SessionEntity";
+import { WrapInTransactionOptions } from "typeorm-transactional/dist/transactions/wrap-in-transaction";
 
 dotenv.config();
 
@@ -13,7 +15,10 @@ export let appDataSource = buildDefaultDataSource();
 
 function buildDefaultDataSource(): DataSource {
     const options = buildDefaultDataSourceOptions();
-    return new DataSource(options);
+    const dataSource = new DataSource(options);
+    initializeTransactionalContext();
+    addTransactionalDataSource(dataSource);
+    return dataSource;
 }
 
 function buildDefaultDataSourceOptions(): DataSourceOptions {
@@ -65,5 +70,14 @@ function setFromEnvIfDefined(options: any, envName: string, optionName: string, 
 }
 
 export function overrideDataSource(dataSource: DataSource) {
+    deleteDataSourceByName("default");
     appDataSource = dataSource;
+    addTransactionalDataSource(dataSource);
 }
+
+export const DefaultTransactional = (options?: WrapInTransactionOptions): MethodDecorator => {
+    return Transactional({
+        isolationLevel: IsolationLevel.SERIALIZABLE,
+        ...options,
+    });
+};

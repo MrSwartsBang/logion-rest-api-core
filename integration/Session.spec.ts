@@ -1,14 +1,14 @@
 import { DateTime } from "luxon";
 import { connect, executeScript, disconnect, checkNumOfRows } from "../src/TestDb";
-import { SessionAggregateRoot, SessionRepository } from "../src";
+import { DefaultTransactional, SessionAggregateRoot, SessionRepository } from "../src";
+import { runOnTransactionCommit } from "typeorm-transactional";
 
-describe('SessionRepository', () => {
+const userAddress = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
+const existingSessionId = '0d9c1ca7-a2c5-48f7-b0fb-e66a977bc7b5';
+const anotherExistingSessionId = 'fc4bfdc6-9e79-4959-9dd5-fde5b38f1f88';
+const unknownSessionId = '5c03194a-1c07-4c7d-b9eb-3df722c15ae9';
 
-    const userAddress = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
-    const existingSessionId = '0d9c1ca7-a2c5-48f7-b0fb-e66a977bc7b5';
-    const anotherExistingSessionId = 'fc4bfdc6-9e79-4959-9dd5-fde5b38f1f88';
-    const unknownSessionId = '5c03194a-1c07-4c7d-b9eb-3df722c15ae9';
-
+describe('SessionRepository (read)', () => {
 
     beforeAll(async () => {
         await connect([ SessionAggregateRoot ]);
@@ -37,18 +37,38 @@ describe('SessionRepository', () => {
         expect(session).toBe(null);
     })
 
+    
+})
+
+describe('SessionRepository (write)', () => {
+
+    beforeEach(async () => {
+        await connect([ SessionAggregateRoot ]);
+        await executeScript("integration/sessions.sql");
+        repository = new SessionRepository();
+        transactionHandler = new TransactionHandler(repository);
+    });
+
+    let repository: SessionRepository;
+
+    let transactionHandler: TransactionHandler;
+
+    afterEach(async () => {
+        await disconnect();
+    });
+
     it("saves session", async () => {
-        // Given
         const session = new SessionAggregateRoot();
         session.userAddress = "5FhGVcrmPpHutfbsR3d472Usrtk18Nk9sgVec5y3ApHf4jaK";
         session.sessionId = "17b1fa11-155e-4c78-a2bc-6d0b478b90bb"
         session.createdOn = DateTime.now().toJSDate()
-        // When
-        await repository.save(session)
+
+        await transactionHandler.saveSession(session);
         // Then
         await checkNumOfRows(`SELECT *
                               FROM session
-                              WHERE session_id = '${ session.sessionId }'`, 1)
+                              WHERE session_id = '${ session.sessionId }'`, 1);
+        expect(transactionHandler.successfulCommit).toBe(true);
     })
 
     it("deletes session", async () => {
@@ -58,11 +78,38 @@ describe('SessionRepository', () => {
         session.sessionId = anotherExistingSessionId
         session.createdOn = DateTime.now().toJSDate()
         // When
-        await repository.delete(session)
+        await transactionHandler.deleteSession(session);
         // Then
         await checkNumOfRows(`SELECT *
                               FROM session
-                              WHERE session_id = '${ session.sessionId }'`, 0)
+                              WHERE session_id = '${ session.sessionId }'`, 0);
+        expect(transactionHandler.successfulCommit).toBe(true);
     })
-})
+});
 
+class TransactionHandler {
+
+    constructor(repository: SessionRepository) {
+        this.repository = repository;
+    }
+
+    private repository: SessionRepository;
+
+    get successfulCommit(): boolean {
+        return this._successfulCommit || false;
+    }
+
+    private _successfulCommit: boolean | undefined;
+
+    @DefaultTransactional()
+    async saveSession(session: SessionAggregateRoot) {
+        runOnTransactionCommit(() => this._successfulCommit = true);
+        await this.repository.save(session);
+    }
+
+    @DefaultTransactional()
+    async deleteSession(session: SessionAggregateRoot) {
+        runOnTransactionCommit(() => this._successfulCommit = true);
+        await this.repository.delete(session);
+    }
+}

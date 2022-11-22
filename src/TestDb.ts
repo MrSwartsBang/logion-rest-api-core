@@ -24,8 +24,8 @@ export async function connect(
         entities,
         migrations
     });
-    await dataSource.initialize();
     overrideDataSource(dataSource);
+    await dataSource.initialize();
 }
 
 let dataSource: DataSource | null = null;
