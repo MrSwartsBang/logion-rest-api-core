@@ -59,6 +59,7 @@ function getEnvConfig(): any { // eslint-disable-line @typescript-eslint/no-expl
     setFromEnvIfDefined(options, "TYPEORM_SYNCHRONIZE", "synchronize");
     setFromEnvIfDefined(options, "TYPEORM_ENTITIES", "entities", value => [ value ]);
     setFromEnvIfDefined(options, "TYPEORM_MIGRATIONS", "migrations", value => [ value ]);
+    setFromEnvIfDefined(options, "TYPEORM_LOGGING", "logging");
     return options;
 }
 
