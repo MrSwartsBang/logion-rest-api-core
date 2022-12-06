@@ -1,6 +1,12 @@
 import "./inversify.decorate";
 import { DateTime } from "luxon";
-import { AuthenticatedUser, AuthenticationSystem, Authenticator, SessionManager } from '@logion/authenticator';
+import {
+    AuthenticatedUser,
+    AuthenticationSystem,
+    Authenticator,
+    SessionManager,
+    AuthorityService
+} from '@logion/authenticator';
 import express, { Express } from 'express';
 import { Dino } from 'dinoloop';
 import { Container } from 'inversify';
@@ -105,6 +111,13 @@ export function mockAuthenticationForUserOrLegalOfficer(isLegalOfficer: boolean,
     });
     authenticatedUser.setup(instance => instance.isNodeOwner()).returns(isLegalOfficer);
     authenticatedUser.setup(instance => instance.isLegalOfficer()).returnsAsync(isLegalOfficer);
+    authenticatedUser.setup(instance => instance.requireLegalOfficerOnNode).returns(() => {
+        if (isLegalOfficer) {
+            return Promise.resolve(authenticatedUser.object())
+        } else {
+            throw new UnauthorizedException();
+        }
+    })
     return mockAuthenticationWithAuthenticatedUser(authenticatedUser.object());
 }
 
@@ -115,6 +128,7 @@ function mockAuthenticationService(mock: AuthenticationServiceMock): Authenticat
     authenticationService.setup(instance => instance.authenticatedUserIs).returns(mock.authenticatedUserIs);
     authenticationService.setup(instance => instance.authenticatedUserIsOneOf).returns(mock.authenticatedUserIsOneOf);
     authenticationService.setup(instance => instance.authenticatedUser).returns(mock.authenticatedUser);
+    authenticationService.setup(instance => instance.authenticatedUserIsLegalOfficerOnNode).returns(mock.authenticatedUser);
     authenticationService.setup(instance => instance.nodeOwner).returns(mock.nodeOwner);
     authenticationService.setup(instance => instance.ensureAuthorizationBearer).returns(mock.ensureAuthorizationBearer);
     return authenticationService.object();
@@ -134,6 +148,13 @@ export function mockAuthenticatedUser(conditionFulfilled: boolean, address?: str
     });
     authenticatedUser.setup(instance => instance.isNodeOwner).returns(() => conditionFulfilled);
     authenticatedUser.setup(instance => instance.isLegalOfficer()).returnsAsync(conditionFulfilled);
+    authenticatedUser.setup(instance => instance.requireLegalOfficerOnNode).returns(() => {
+        if (address === ALICE) {
+            return Promise.resolve(authenticatedUser.object());
+        } else {
+            throw new UnauthorizedException();
+        }
+    });
     return authenticatedUser.object();
 }
 
@@ -148,9 +169,21 @@ function mockAuthenticationSystem(mock: AuthenticationServiceMock): Authenticati
     const authenticator = new Mock<Authenticator>();
     authenticator.setup(instance => instance.ensureAuthenticatedUserOrThrow).returns(() => mock.authenticatedUser());
 
+    const authorityService: AuthorityService = {
+        isLegalOfficer(): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        isLegalOfficerNode(): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        isLegalOfficerOnNode(): Promise<boolean> {
+            return Promise.resolve(false);
+        }
+    }
     return {
         sessionManager: sessionManager.object(),
         authenticator: authenticator.object(),
+        authorityService,
     };
 }
 
