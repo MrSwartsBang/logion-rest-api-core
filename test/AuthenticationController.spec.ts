@@ -1,4 +1,12 @@
-import { Authenticator, Session, SessionManager, SessionSignature, SignedSession, Token } from "@logion/authenticator";
+import {
+    Authenticator,
+    Session,
+    SessionManager,
+    SessionSignature,
+    SignedSession,
+    Token,
+    AuthorityService
+} from "@logion/authenticator";
 import { UnauthorizedException } from "dinoloop";
 import { Container } from "inversify";
 import { DateTime } from "luxon";
@@ -160,9 +168,22 @@ function mockDependenciesForAuth(container: Container, verifies: boolean, sessio
     const sessionManager = new Mock<SessionManager>();
     const authenticator = new Mock<Authenticator>();
 
+    const authorityService: AuthorityService = {
+        isLegalOfficer(): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        isLegalOfficerNode(): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+        isLegalOfficerOnNode(): Promise<boolean> {
+            return Promise.resolve(false);
+        }
+    }
+
     authenticationService.setup(instance => instance.authenticationSystem()).returnsAsync({
         sessionManager: sessionManager.object(),
         authenticator: authenticator.object(),
+        authorityService,
     });
 
     const session = new Mock<Session>();

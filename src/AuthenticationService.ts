@@ -23,6 +23,11 @@ export class AuthenticationService {
         return user;
     }
 
+    async authenticatedUserIsLegalOfficerOnNode(request: Request): Promise<AuthenticatedUser> {
+        const user = await this.authenticatedUser(request);
+        return user.requireLegalOfficerOnNode();
+    }
+
     async authenticatedUserIsOneOf(request: Request, ...addresses: (string | undefined | null)[]): Promise<AuthenticatedUser> {
         const user = await this.authenticatedUser(request);
         user.require(user => user.isOneOf(addresses), "User has not access to this resource");
