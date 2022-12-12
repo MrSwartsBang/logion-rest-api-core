@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException } from "dinoloop/modules/builtin/exceptions/exceptions";
+import { BadRequestException, ForbiddenException } from "dinoloop/modules/builtin/exceptions/exceptions.js";
 
 export function badRequest(error: string): Error {
     return new BadRequestException(errorPayload(

@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
 import { ErrorController } from 'dinoloop';
 
-import { Log } from "./Logging";
-import { errorPayload } from './Errors';
+import { Log } from "./Logging.js";
+import { errorPayload } from './Errors.js';
 
 const { logger } = Log;
 

@@ -1,8 +1,8 @@
 import { AuthenticatedUser, AuthenticationSystem } from "@logion/authenticator";
 import { injectable } from "inversify";
 import { Request } from "express";
-import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions";
-import { AuthenticationSystemFactory, unauthorized } from "./AuthenticationSystemFactory";
+import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions.js";
+import { AuthenticationSystemFactory, unauthorized } from "./AuthenticationSystemFactory.js";
 
 @injectable()
 export class AuthenticationService {

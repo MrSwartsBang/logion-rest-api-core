@@ -1,17 +1,17 @@
-import "./inversify.decorate";
+import "./inversify.decorate.js";
 import { OpenAPIV3 } from 'express-oas-generator';
 import { Container } from 'inversify';
-import { schemas } from './ApiTypes';
-import { AuthenticationController, fillInSpecForAuthenticationController } from './AuthenticationController';
-import { AuthenticationService } from './AuthenticationService';
-import { AuthenticationSystemFactory } from './AuthenticationSystemFactory';
-import { addSchema } from './OpenApi';
-import { SessionFactory, SessionRepository } from './SessionServices';
+import { schemas } from './ApiTypes.js';
+import { AuthenticationController, fillInSpecForAuthenticationController } from './AuthenticationController.js';
+import { AuthenticationService } from './AuthenticationService.js';
+import { AuthenticationSystemFactory } from './AuthenticationSystemFactory.js';
+import { addSchema } from './OpenApi.js';
+import { SessionFactory, SessionRepository } from './SessionServices.js';
 import { Dino } from "dinoloop";
-import { ApplicationErrorController } from "./ApplicationErrorController";
-import { JsonResponse } from "./JsonResponse";
-import { PolkadotService } from "./PolkadotService";
-import { fillInSpecForHealthController, HealthController } from "./HealthController";
+import { ApplicationErrorController } from "./ApplicationErrorController.js";
+import { JsonResponse } from "./JsonResponse.js";
+import { PolkadotService } from "./PolkadotService.js";
+import { fillInSpecForHealthController, HealthController } from "./HealthController.js";
 
 export function configureContainer(container: Container) {
     container.bind(SessionRepository).toSelf();

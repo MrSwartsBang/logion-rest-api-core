@@ -1,9 +1,9 @@
 import { AuthenticatedUser, AuthenticationSystem, Authenticator } from "@logion/authenticator";
 import { Mock } from "moq.ts";
 import { Request } from "express";
-import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions";
+import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions.js";
 
-import { AuthenticationService, AuthenticationSystemFactory } from "../src";
+import { AuthenticationService, AuthenticationSystemFactory } from "../src/index.js";
 
 const USER_TOKEN = "eyJhbGciOiJFZERTQSJ9.eyJpYXQiOjE2MzEyMTc2MTEsImV4cCI6NDc4NDgxNzYxMSwiaXNzIjoiMTJEM0tvb1dEQ3VHVTdXWTNWYVdqQlMxRTQ0eDRFbm1UZ0szSFJ4V0ZxWUczZHFYRGZQMSIsInN1YiI6IjVINE12QXNvYmZaNmJCQ0R5ajVkc3JXWUxyQThIclJ6YXFhOXA2MVVYdHhNaFNDWSJ9.pBYUyYxq2I_HZiYyeJ-rc8ANxVgckLyd2Y1Snu685mDK4fSwanb6EHsMAP47iCtzSxhaB5bDu7zDmY-XMAyuAw"
 const USER_ADDRESS = "5H4MvAsobfZ6bBCDyj5dsrWYLrA8HrRzaqa9p61UXtxMhSCY"

@@ -2,8 +2,8 @@ import request from 'supertest';
 import { Container } from "inversify";
 import { Mock } from "moq.ts";
 
-import { setupApp, mockAuthenticationWithCondition } from "../src/TestApp";
-import { HealthController, HealthService } from "../src/HealthController";
+import { setupApp, mockAuthenticationWithCondition } from "../src/TestApp.js";
+import { HealthController, HealthService } from "../src/HealthController.js";
 
 describe('HealthController', () => {
 

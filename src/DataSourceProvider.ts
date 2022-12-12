@@ -3,9 +3,9 @@ import { addTransactionalDataSource, deleteDataSourceByName, initializeTransacti
 import dotenv from "dotenv";
 import { existsSync, readFileSync } from "fs";
 
-import { LogionNamingStrategy } from "./LogionNamingStrategy";
-import { SessionAggregateRoot } from "./SessionEntity";
-import { WrapInTransactionOptions } from "typeorm-transactional/dist/transactions/wrap-in-transaction";
+import { LogionNamingStrategy } from "./LogionNamingStrategy.js";
+import { SessionAggregateRoot } from "./SessionEntity.js";
+import { WrapInTransactionOptions } from "typeorm-transactional/dist/transactions/wrap-in-transaction.js";
 
 dotenv.config();
 
