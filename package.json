@@ -1,6 +1,6 @@
 {
   "name": "@logion/rest-api-core",
-  "version": "0.2.2-1",
+  "version": "0.3.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/logion-network/logion-rest-api-core.git"
