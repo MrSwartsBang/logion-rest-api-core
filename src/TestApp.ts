@@ -158,6 +158,24 @@ export function mockAuthenticatedUser(conditionFulfilled: boolean, address?: str
     return authenticatedUser.object();
 }
 
+export function mockLegalOfficerOnNode(address: string): AuthenticatedUser {
+    const authenticatedUser = new Mock<AuthenticatedUser>();
+    authenticatedUser.setup(instance => instance.address).returns(address);
+    authenticatedUser.setup(instance => instance.is).returns((param) => param === address);
+    authenticatedUser.setup(instance => instance.isOneOf).returns(addresses => addresses.indexOf(address) >= 0);
+    authenticatedUser.setup(instance => instance.require).returns((predicate) => {
+        if (!predicate(authenticatedUser.object())) {
+            throw new UnauthorizedException();
+        } else {
+            return authenticatedUser.object();
+        }
+    });
+    authenticatedUser.setup(instance => instance.isNodeOwner()).returns(true);
+    authenticatedUser.setup(instance => instance.isLegalOfficer()).returnsAsync(true);
+    authenticatedUser.setup(instance => instance.requireLegalOfficerOnNode()).returns(Promise.resolve(authenticatedUser.object()));
+    return authenticatedUser.object();
+}
+
 function mockAuthenticationSystem(mock: AuthenticationServiceMock): AuthenticationSystem {
     const sessionManager = new Mock<SessionManager>();
     sessionManager.setup(instance => instance.createNewSession).returns(addresses => ({
