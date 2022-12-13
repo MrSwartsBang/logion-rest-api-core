@@ -4,9 +4,9 @@ import { OpenAPIV3 } from "express-oas-generator";
 import { injectable } from "inversify";
 import { DateTime } from "luxon";
 
-import { AuthenticationService } from "./AuthenticationService";
-import { SessionRepository, SessionFactory } from "./SessionServices";
-import { requireDefined } from "./Assertions";
+import { AuthenticationService } from "./AuthenticationService.js";
+import { SessionRepository, SessionFactory } from "./SessionServices.js";
+import { requireDefined } from "./Assertions.js";
 import {
     getRequestBody,
     getBodyContent,
@@ -14,11 +14,11 @@ import {
     setPathParameters,
     addTag,
     setControllerTag
-} from "./OpenApi";
-import { unauthorized } from "./AuthenticationSystemFactory";
-import { AuthenticateRequestView, AuthenticateResponseView, RefreshRequestView, SignInRequestView, SignInResponseView, TokenView } from "./ApiTypes";
+} from "./OpenApi.js";
+import { unauthorized } from "./AuthenticationSystemFactory.js";
+import { AuthenticateRequestView, AuthenticateResponseView, RefreshRequestView, SignInRequestView, SignInResponseView, TokenView } from "./ApiTypes.js";
 
-import { Log } from './Logging';
+import { Log } from './Logging.js';
 const { logger } = Log;
 
 export function fillInSpecForAuthenticationController(spec: OpenAPIV3.Document): void {

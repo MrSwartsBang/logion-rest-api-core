@@ -2,8 +2,8 @@ import 'reflect-metadata';
 import fs from 'fs';
 import { QueryRunner, MigrationInterface, DataSource } from "typeorm";
 
-import { overrideDataSource } from './DataSourceProvider';
-import { requireDefined } from './Assertions';
+import { overrideDataSource } from './DataSourceProvider.js';
+import { requireDefined } from './Assertions.js';
 
 export async function connect(
     entities: (Function | string)[], // eslint-disable-line @typescript-eslint/ban-types

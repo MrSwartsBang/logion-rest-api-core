@@ -1,10 +1,10 @@
 import { Repository } from "typeorm";
 import { injectable } from "inversify";
 
-import { appDataSource } from "./DataSourceProvider";
+import { appDataSource } from "./DataSourceProvider.js";
 import { DateTime } from "luxon";
-import { requireDefined } from "./Assertions";
-import { SessionAggregateRoot } from "./SessionEntity";
+import { requireDefined } from "./Assertions.js";
+import { SessionAggregateRoot } from "./SessionEntity.js";
 
 @injectable()
 export class SessionRepository {

@@ -1,8 +1,8 @@
 import { DateTime } from "luxon";
 import { v4 as uuid } from "uuid";
 
-import { SessionFactory, SessionAggregateRoot, NewSessionParameters } from "../src";
-import { ALICE } from "../src/TestApp";
+import { SessionFactory, SessionAggregateRoot, NewSessionParameters } from "../src/index.js";
+import { ALICE } from "../src/TestApp.js";
 
 describe("SessionFactory", () => {
 

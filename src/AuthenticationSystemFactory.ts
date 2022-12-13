@@ -4,7 +4,7 @@ import { injectable } from "inversify";
 import { Duration } from "luxon";
 import PeerId from "peer-id";
 
-import { PolkadotService } from "./PolkadotService";
+import { PolkadotService } from "./PolkadotService.js";
 
 export function unauthorized(error: string): UnauthorizedException<{ error: string }> {
     return new UnauthorizedException({ error });

@@ -1,9 +1,9 @@
 import { injectable } from 'inversify';
 import { ApiController, Controller, Async, HttpGet } from 'dinoloop';
 import { OpenAPIV3 } from 'express-oas-generator';
-import { addTag, getDefaultResponses, setControllerTag } from './OpenApi';
-import { AuthenticationService } from './AuthenticationService';
-import { requireDefined } from './Assertions';
+import { addTag, getDefaultResponses, setControllerTag } from './OpenApi.js';
+import { AuthenticationService } from './AuthenticationService.js';
+import { requireDefined } from './Assertions.js';
 
 export function fillInSpecForHealthController(spec: OpenAPIV3.Document): void {
     const tagName = 'Health';

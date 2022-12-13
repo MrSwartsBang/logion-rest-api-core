@@ -1,7 +1,7 @@
 import { OpenAPIV3 } from 'express-oas-generator';
 import fs from "fs";
 import openapiTS from "openapi-typescript";
-import { requireDefined } from './Assertions';
+import { requireDefined } from './Assertions.js';
 
 export function setOpenApi3(spec: OpenAPIV3.Document) {
     spec.openapi = "3.0.0";

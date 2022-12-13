@@ -1,4 +1,4 @@
-import "./inversify.decorate";
+import "./inversify.decorate.js";
 import { DateTime } from "luxon";
 import {
     AuthenticatedUser,
@@ -10,12 +10,12 @@ import {
 import express, { Express } from 'express';
 import { Dino } from 'dinoloop';
 import { Container } from 'inversify';
-import { ApplicationErrorController } from './ApplicationErrorController';
-import { JsonResponse } from './JsonResponse';
+import { ApplicationErrorController } from './ApplicationErrorController.js';
+import { JsonResponse } from './JsonResponse.js';
 import { Mock } from "moq.ts";
-import { AuthenticationService } from "./AuthenticationService";
-import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions";
-import { buildBaseExpress } from "./Express";
+import { AuthenticationService } from "./AuthenticationService.js";
+import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions.js";
+import { buildBaseExpress } from "./Express.js";
 
 export const ALICE = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY";
 export const BOB = "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty";

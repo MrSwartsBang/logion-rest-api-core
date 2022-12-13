@@ -21,13 +21,13 @@ import {
     SessionAggregateRoot,
     NewSessionParameters,
     AuthenticateRequestView,
-} from "../src";
+} from "../src/index.js";
 
 import {
     setupApp,
     ALICE,
     BOB,
-} from "../src/TestApp";
+} from "../src/TestApp.js";
 
 const TIMESTAMP = "2021-06-10T16:25:23.668294";
 const TOKEN_ALICE = "some-fake-token-for-ALICE";
