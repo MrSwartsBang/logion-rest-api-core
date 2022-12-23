@@ -1,6 +1,6 @@
 {
   "name": "@logion/rest-api-core",
-  "version": "0.3.1",
+  "version": "0.3.2-1",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/logion-network/logion-rest-api-core.git"
@@ -20,13 +20,13 @@
     "build": "rimraf dist && yarn lint && tsc --project ./tsconfig.json",
     "lint": "yarn eslint src/**",
     "test": "NODE_OPTIONS=--loader=ts-node/esm jasmine --config=jasmine.json",
-    "integration-test": "yarn run setup-test-db && jasmine --config=jasmine-integration.json ; yarn run teardown-test-db",
+    "integration-test": "yarn run setup-test-db && NODE_OPTIONS=--loader=ts-node/esm jasmine --config=jasmine-integration.json ; yarn run teardown-test-db",
     "setup-test-db": "docker run -d --rm --name logion-test-db -e POSTGRES_PASSWORD=secret -p 5432:5432 logionnetwork/logion-postgres:latest",
     "teardown-test-db": "docker stop logion-test-db",
     "coverage": "nyc yarn run test"
   },
   "dependencies": {
-    "@logion/authenticator": "^0.4.0",
+    "@logion/authenticator": "^0.4.1-1",
     "dinoloop": "^2.4.0",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@logion/node-api": "^0.9.0-1",
     "@tsconfig/node16": "^1.0.3",
     "@types/express": "^4.17.14",
     "@types/express-fileupload": "^1.4.1",

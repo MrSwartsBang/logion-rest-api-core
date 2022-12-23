@@ -1,7 +1,7 @@
 import { DateTime } from "luxon";
-import { connect, executeScript, disconnect, checkNumOfRows } from "../src/TestDb";
-import { DefaultTransactional, SessionAggregateRoot, SessionRepository } from "../src";
 import { runOnTransactionCommit, runOnTransactionRollback } from "typeorm-transactional";
+import { connect, executeScript, disconnect, checkNumOfRows } from "../src/TestDb.js";
+import { DefaultTransactional, SessionAggregateRoot, SessionRepository } from "../src/index.js";
 
 const userAddress = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
 const existingSessionId = '0d9c1ca7-a2c5-48f7-b0fb-e66a977bc7b5';
