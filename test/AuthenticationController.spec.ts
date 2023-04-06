@@ -21,6 +21,7 @@ import {
     SessionAggregateRoot,
     NewSessionParameters,
     AuthenticateRequestView,
+    requireDefined,
 } from "../src/index.js";
 
 import {
@@ -193,12 +194,12 @@ function mockDependenciesForAuth(container: Container, verifies: boolean, sessio
         const signatures: Record<string, SessionSignature> = {
             [ ALICE ]: {
                 signature: "SIG_ALICE",
-                signedOn: DateTime.now().toISO(),
+                signedOn: requireDefined(DateTime.now().toISO()),
                 type: "POLKADOT",
             },
             [ BOB ]: {
                 signature: "SIG_BOB",
-                signedOn: DateTime.now().toISO(),
+                signedOn: requireDefined(DateTime.now().toISO()),
                 type: "POLKADOT",
             }
         };

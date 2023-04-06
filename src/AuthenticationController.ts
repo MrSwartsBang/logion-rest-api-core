@@ -144,7 +144,7 @@ export class AuthenticationController extends ApiController {
             const token = tokens[address];
             responseTokens[address] = {
                 value: token.value,
-                expiredOn: token.expiredOn.toISO({ includeOffset: false }),
+                expiredOn: requireDefined(token.expiredOn.toISO({ includeOffset: false })),
             }
         }
         return response;
@@ -162,7 +162,7 @@ export class AuthenticationController extends ApiController {
                 const refreshedToken = await authenticator.refreshToken(oldToken);
                 responseTokens[address] = {
                     value: refreshedToken.value,
-                    expiredOn: refreshedToken.expiredOn.toISO({ includeOffset: false }),
+                    expiredOn: requireDefined(refreshedToken.expiredOn.toISO({ includeOffset: false })),
                 }
             } catch (e) {
                 logger.warn("Failed to refresh token for %s: %s", address, e)

@@ -17,6 +17,7 @@ describe('AuthenticationService authenticatedUserIs()', () => {
         request.setup(instance => instance.header("Authorization")).returns("Bearer " + USER_TOKEN)
         const logionUser = await authenticationService.authenticatedUser(request.object());
         expect(logionUser.address).toBe(USER_ADDRESS);
+        expect(logionUser.type).toBe("Polkadot");
     })
 
     it('does not authenticate invalid header', async () => {
@@ -32,6 +33,7 @@ function givenAuthenticationSystemFactory() {
     const authenticator = new Mock<Authenticator>();
     const userAuthenticatedUser = new Mock<AuthenticatedUser>();
     userAuthenticatedUser.setup(instance => instance.address).returns(USER_ADDRESS);
+    userAuthenticatedUser.setup(instance => instance.type).returns("Polkadot");
     authenticator.setup(instance => instance.ensureAuthenticatedUserOrThrow(USER_TOKEN)).returnsAsync(userAuthenticatedUser.object());
 
     const authenticationSystem = new Mock<AuthenticationSystem>();
