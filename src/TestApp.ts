@@ -97,10 +97,25 @@ function throwOrReturn(condition: boolean, authenticatedUser: AuthenticatedUser)
     };
 }
 
+function invalidSignature(): Promise<AuthenticatedUser> {
+    throw new UnauthorizedException("Invalid Signature");
+}
+
+export function mockAuthenticationFailureWithInvalidSignature(): AuthenticationServiceMock {
+    return {
+        authenticatedUser: invalidSignature,
+        authenticatedUserIs: invalidSignature,
+        authenticatedUserIsOneOf: invalidSignature,
+        ensureAuthorizationBearer: invalidSignature,
+        nodeOwner: ALICE,
+    }
+}
+
 export function mockAuthenticationForUserOrLegalOfficer(isLegalOfficer: boolean, address?: string) {
     const authenticatedUser = new Mock<AuthenticatedUser>();
     authenticatedUser.setup(instance => instance.address).returns(address || ALICE);
     authenticatedUser.setup(instance => instance.type).returns("Polkadot");
+    authenticatedUser.setup(instance => instance.isPolkadot()).returns(true);
     authenticatedUser.setup(instance => instance.is).returns(() => true);
     authenticatedUser.setup(instance => instance.isOneOf).returns(() => true);
     authenticatedUser.setup(instance => instance.require).returns((predicate) => {
@@ -139,6 +154,7 @@ export function mockAuthenticatedUser(conditionFulfilled: boolean, address?: str
     const authenticatedUser = new Mock<AuthenticatedUser>();
     authenticatedUser.setup(instance => instance.address).returns(address || ALICE);
     authenticatedUser.setup(instance => instance.type).returns("Polkadot");
+    authenticatedUser.setup(instance => instance.isPolkadot()).returns(true);
     authenticatedUser.setup(instance => instance.is).returns(() => conditionFulfilled);
     authenticatedUser.setup(instance => instance.isOneOf).returns(() => conditionFulfilled);
     authenticatedUser.setup(instance => instance.require).returns((predicate) => {
@@ -164,6 +180,7 @@ export function mockLegalOfficerOnNode(address: string): AuthenticatedUser {
     const authenticatedUser = new Mock<AuthenticatedUser>();
     authenticatedUser.setup(instance => instance.address).returns(address);
     authenticatedUser.setup(instance => instance.type).returns("Polkadot");
+    authenticatedUser.setup(instance => instance.isPolkadot()).returns(true);
     authenticatedUser.setup(instance => instance.is).returns((param) => param === address);
     authenticatedUser.setup(instance => instance.isOneOf).returns(addresses => addresses.indexOf(address) >= 0);
     authenticatedUser.setup(instance => instance.require).returns((predicate) => {
