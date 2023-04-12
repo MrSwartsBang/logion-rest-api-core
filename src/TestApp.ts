@@ -16,11 +16,23 @@ import { Mock } from "moq.ts";
 import { AuthenticationService } from "./AuthenticationService.js";
 import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions.js";
 import { buildBaseExpress } from "./Express.js";
+import { ValidAccountId, LogionNodeApi, AnyAccountId } from "@logion/node-api";
 
 export const ALICE = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY";
 export const BOB = "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty";
 export const CHARLY = "5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y";
 
+export function mockLogionNodeApi(): LogionNodeApi {
+    return {
+        createType() {
+            return;
+        }
+    } as unknown as LogionNodeApi;
+}
+
+export function validAccountId(address: string): ValidAccountId {
+    return new ValidAccountId(new AnyAccountId(mockLogionNodeApi(), address, "Polkadot"));
+}
 export function setupApp<T>(
     controller: Function & { prototype: T; }, // eslint-disable-line @typescript-eslint/ban-types
     mockBinder: (container: Container) => void,
@@ -97,10 +109,25 @@ function throwOrReturn(condition: boolean, authenticatedUser: AuthenticatedUser)
     };
 }
 
+function invalidSignature(): Promise<AuthenticatedUser> {
+    throw new UnauthorizedException("Invalid Signature");
+}
+
+export function mockAuthenticationFailureWithInvalidSignature(): AuthenticationServiceMock {
+    return {
+        authenticatedUser: invalidSignature,
+        authenticatedUserIs: invalidSignature,
+        authenticatedUserIsOneOf: invalidSignature,
+        ensureAuthorizationBearer: invalidSignature,
+        nodeOwner: ALICE,
+    }
+}
+
 export function mockAuthenticationForUserOrLegalOfficer(isLegalOfficer: boolean, address?: string) {
     const authenticatedUser = new Mock<AuthenticatedUser>();
     authenticatedUser.setup(instance => instance.address).returns(address || ALICE);
     authenticatedUser.setup(instance => instance.type).returns("Polkadot");
+    authenticatedUser.setup(instance => instance.isPolkadot()).returns(true);
     authenticatedUser.setup(instance => instance.is).returns(() => true);
     authenticatedUser.setup(instance => instance.isOneOf).returns(() => true);
     authenticatedUser.setup(instance => instance.require).returns((predicate) => {
@@ -139,6 +166,7 @@ export function mockAuthenticatedUser(conditionFulfilled: boolean, address?: str
     const authenticatedUser = new Mock<AuthenticatedUser>();
     authenticatedUser.setup(instance => instance.address).returns(address || ALICE);
     authenticatedUser.setup(instance => instance.type).returns("Polkadot");
+    authenticatedUser.setup(instance => instance.isPolkadot()).returns(true);
     authenticatedUser.setup(instance => instance.is).returns(() => conditionFulfilled);
     authenticatedUser.setup(instance => instance.isOneOf).returns(() => conditionFulfilled);
     authenticatedUser.setup(instance => instance.require).returns((predicate) => {
@@ -164,6 +192,7 @@ export function mockLegalOfficerOnNode(address: string): AuthenticatedUser {
     const authenticatedUser = new Mock<AuthenticatedUser>();
     authenticatedUser.setup(instance => instance.address).returns(address);
     authenticatedUser.setup(instance => instance.type).returns("Polkadot");
+    authenticatedUser.setup(instance => instance.isPolkadot()).returns(true);
     authenticatedUser.setup(instance => instance.is).returns((param) => param === address);
     authenticatedUser.setup(instance => instance.isOneOf).returns(addresses => addresses.indexOf(address) >= 0);
     authenticatedUser.setup(instance => instance.require).returns((predicate) => {

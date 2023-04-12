@@ -2,13 +2,17 @@ import { DateTime } from "luxon";
 import { v4 as uuid } from "uuid";
 
 import { SessionFactory, SessionAggregateRoot, NewSessionParameters } from "../src/index.js";
-import { ALICE } from "../src/TestApp.js";
+import { ALICE, validAccountId } from "../src/TestApp.js";
 
 describe("SessionFactory", () => {
 
     it("createSession", () => {
         const sessionId = givenSessionId()
-        const params = { sessionId, userAddress: ALICE, createdOn: DateTime.now() }
+        const params: NewSessionParameters = {
+            sessionId,
+            account: validAccountId(ALICE),
+            createdOn: DateTime.now()
+        }
         whenCreatingSession(params);
         thenSessionCreatedWith(params)
     })
@@ -27,6 +31,7 @@ let session: SessionAggregateRoot;
 
 function thenSessionCreatedWith(params: NewSessionParameters) {
     expect(session.sessionId).toBe(params.sessionId);
-    expect(session.userAddress).toBe(params.userAddress);
+    expect(session.userAddress).toBe(params.account.address);
+    expect(session.userAddressType).toBe(params.account.type);
     expect(session.createdOn).toEqual(params.createdOn.toJSDate());
 }
