@@ -6,6 +6,9 @@ export class SessionAggregateRoot {
     @PrimaryColumn({ length: 255, name: "user_address" })
     userAddress?: string;
 
+    @PrimaryColumn({ length: 255, name: "user_address_type" })
+    userAddressType?: string;
+
     @Column({ name: "session_id", type: "uuid" })
     sessionId?: string;
 

@@ -19,6 +19,9 @@ import { unauthorized } from "./AuthenticationSystemFactory.js";
 import { AuthenticateRequestView, AuthenticateResponseView, RefreshRequestView, SignInRequestView, SignInResponseView, TokenView } from "./ApiTypes.js";
 
 import { Log } from './Logging.js';
+import { ValidAccountId } from "@logion/node-api";
+import { PolkadotService } from "./PolkadotService.js";
+import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions.js";
 const { logger } = Log;
 
 export function fillInSpecForAuthenticationController(spec: OpenAPIV3.Document): void {
@@ -42,7 +45,8 @@ export class AuthenticationController extends ApiController {
     constructor(
         private sessionRepository: SessionRepository,
         private sessionFactory: SessionFactory,
-        private authenticationService: AuthenticationService) {
+        private authenticationService: AuthenticationService,
+        private polkadotService: PolkadotService) {
         super();
     }
 
@@ -67,13 +71,22 @@ export class AuthenticationController extends ApiController {
         const session = sessionManager.createNewSession(requireDefined(signInRequest.addresses));
         for(const address of session.addresses) {
             const sessionAggregate = this.sessionFactory.newSession({
-                userAddress: address,
+                account: await this.toAccount(address),
                 sessionId: session.id,
                 createdOn: session.createdOn,
             });
             await this.sessionRepository.save(sessionAggregate);
         }
         return Promise.resolve({ sessionId: session.id });
+    }
+
+    private async toAccount(address: string): Promise<ValidAccountId> {
+        try {
+            const api = await this.polkadotService.readyApi();
+            return ValidAccountId.parseKey(api, address)
+        } catch (error) {
+            throw new UnauthorizedException({ error: "" + error });
+        }
     }
 
     static authenticate(spec: OpenAPIV3.Document) {
@@ -111,7 +124,7 @@ export class AuthenticationController extends ApiController {
         const signatures: Record<string, SessionSignature> = {};
         let createdOn: DateTime | undefined;
         for (const address in authenticateRequest.signatures) {
-            createdOn = await this.clearSession(address, sessionId);
+            createdOn = await this.clearSession(await this.toAccount(address), sessionId);
 
             const signature = authenticateRequest.signatures[address];
             signatures[address] = {
@@ -128,8 +141,8 @@ export class AuthenticationController extends ApiController {
         return { session, signatures };
     }
 
-    private async clearSession(address: string, sessionId: string): Promise<DateTime> {
-        const session = await this.sessionRepository.find(address, sessionId);
+    private async clearSession(account: ValidAccountId, sessionId: string): Promise<DateTime> {
+        const session = await this.sessionRepository.find(account, sessionId);
         if (session === null) {
             throw unauthorized("Invalid session")
         }
