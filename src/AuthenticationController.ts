@@ -120,18 +120,20 @@ export class AuthenticationController extends ApiController {
     private async sessionAndSignatures(
         authenticateRequest: AuthenticateRequestView,
         sessionId: string
-    ): Promise<{ session: Session, signatures: Record<string, SessionSignature> }> {
-        const signatures: Record<string, SessionSignature> = {};
+    ): Promise<{ session: Session, signatures: SessionSignature[] }> {
+        const signatures: SessionSignature[] = [];
         let createdOn: DateTime | undefined;
         for (const address in authenticateRequest.signatures) {
-            createdOn = await this.clearSession(await this.toAccount(address), sessionId);
+            const account = await this.toAccount(address);
+            createdOn = await this.clearSession(account, sessionId);
 
             const signature = authenticateRequest.signatures[address];
-            signatures[address] = {
+            signatures.push({
+                address: account.address,
                 signature: requireDefined(signature.signature),
                 signedOn: requireDefined(signature.signedOn),
-                type: requireDefined(signature.type),
-            };
+                type: requireDefined(signature.type)
+            });
         }
         const session: Session = {
             addresses: Object.keys(signatures),
@@ -150,12 +152,12 @@ export class AuthenticationController extends ApiController {
         return DateTime.fromJSDate(requireDefined(session.createdOn));
     }
 
-    private toAuthenticateResponseView(tokens: Record<string, Token>): AuthenticateResponseView {
+    private toAuthenticateResponseView(tokens: Token[]): AuthenticateResponseView {
         const responseTokens: Record<string, TokenView> = {};
         const response: AuthenticateResponseView = { tokens: responseTokens };
-        for (const address in tokens) {
-            const token = tokens[address];
-            responseTokens[address] = {
+        for (const token of tokens) {
+            const key = `${ token.type }:${ token.address }`;
+            responseTokens[key] = {
                 value: token.value,
                 expiredOn: requireDefined(token.expiredOn.toISO({ includeOffset: false })),
             }

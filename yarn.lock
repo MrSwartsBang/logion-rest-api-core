@@ -1685,9 +1685,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@logion/authenticator@npm:^0.5.0-4":
-  version: 0.5.0-4
-  resolution: "@logion/authenticator@npm:0.5.0-4"
+"@logion/authenticator@npm:^0.5.0-5":
+  version: 0.5.0-5
+  resolution: "@logion/authenticator@npm:0.5.0-5"
   dependencies:
     "@ethersproject/transactions": ^5.6.2
     "@types/luxon": ^3.3.0
@@ -1698,7 +1698,7 @@ __metadata:
     web3-utils: ^1.7.4
   peerDependencies:
     "@logion/node-api": 0.x
-  checksum: 7dbaec746e0f32eac5a943e99edee4f5db456778fb1a178263e7e0646a209dcc26b7984ee330216335e4bf9fdf4b09ba9b36445a81bd2188283b958e80380635
+  checksum: 50c5c10a14cfb897ac1c5aff55149dfd96d4fc433a9a4217a9e14c2b358d79468858e8ad1419d77e3e54f0c175f9e6c78c8d0ef15cd09b7993721e90949ff1cf
   languageName: node
   linkType: hard
 
@@ -1721,7 +1721,7 @@ __metadata:
   resolution: "@logion/rest-api-core@workspace:."
   dependencies:
     "@istanbuljs/nyc-config-typescript": ^1.0.2
-    "@logion/authenticator": ^0.5.0-4
+    "@logion/authenticator": ^0.5.0-5
     "@logion/node-api": ^0.12.0-3
     "@tsconfig/node16": ^1.0.3
     "@types/express": ^4.17.14
