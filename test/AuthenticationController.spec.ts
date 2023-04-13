@@ -235,32 +235,38 @@ function mockDependenciesForAuth(container: Container, verifies: boolean, sessio
     session.setup(instance => instance.addresses).returns([ ALICE, BOB ]);
 
     if(verifies) {
-        const signatures: Record<string, SessionSignature> = {
-            [ validAccountId(ALICE).toKey() ]: {
+        const signatures: SessionSignature[] = [
+            {
+                address: ALICE,
                 signature: "SIG_ALICE",
                 signedOn: requireDefined(DateTime.now().toISO()),
                 type: "POLKADOT",
             },
-            [ validAccountId(BOB).toKey() ]: {
+            {
+                address: BOB,
                 signature: "SIG_BOB",
                 signedOn: requireDefined(DateTime.now().toISO()),
                 type: "POLKADOT",
             }
-        };
+        ];
         sessionManager.setup(instance => instance.signedSessionOrThrow(It.IsAny(), It.IsAny())).returnsAsync({
             session: session.object(),
             signatures
         });
-        const tokens: Record<string, Token> = {
-            [ validAccountId(ALICE).toKey() ]: {
+        const tokens: Token[] = [
+            {
+                type: "Polkadot",
+                address: ALICE,
                 value: TOKEN_ALICE,
                 expiredOn: DateTime.now(),
             },
-            [ validAccountId(BOB).toKey() ]: {
+            {
+                type: "Polkadot",
+                address: BOB,
                 value: TOKEN_BOB,
                 expiredOn: DateTime.now(),
             }
-        };
+        ];
         authenticator.setup(instance => instance.createTokens(It.Is<SignedSession>(
             args => args.session === session.object() && args.signatures === signatures
         ), It.IsAny())).returnsAsync(tokens);
