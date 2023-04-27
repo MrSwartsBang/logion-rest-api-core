@@ -16,23 +16,13 @@ import { Mock } from "moq.ts";
 import { AuthenticationService } from "./AuthenticationService.js";
 import { UnauthorizedException } from "dinoloop/modules/builtin/exceptions/exceptions.js";
 import { buildBaseExpress } from "./Express.js";
-import { ValidAccountId, LogionNodeApi, AnyAccountId } from "@logion/node-api";
 
 export const ALICE = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY";
 export const BOB = "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty";
 export const CHARLY = "5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y";
 
-export function mockLogionNodeApi(): LogionNodeApi {
-    return {
-        createType() {
-            return;
-        }
-    } as unknown as LogionNodeApi;
-}
+export * from "./TestUtil.js";
 
-export function validAccountId(address: string): ValidAccountId {
-    return new ValidAccountId(new AnyAccountId(mockLogionNodeApi(), address, "Polkadot"));
-}
 export function setupApp<T>(
     controller: Function & { prototype: T; }, // eslint-disable-line @typescript-eslint/ban-types
     mockBinder: (container: Container) => void,
