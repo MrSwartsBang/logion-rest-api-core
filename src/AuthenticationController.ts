@@ -83,7 +83,7 @@ export class AuthenticationController extends ApiController {
     private async toAccount(address: string): Promise<ValidAccountId> {
         try {
             const api = await this.polkadotService.readyApi();
-            return ValidAccountId.parseKey(api, address)
+            return ValidAccountId.parseKey(api.polkadot, address);
         } catch (error) {
             throw new UnauthorizedException({ error: "" + error });
         }
