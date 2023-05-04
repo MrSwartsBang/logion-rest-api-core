@@ -1727,9 +1727,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@logion/node-api@npm:^0.13.0-6":
-  version: 0.13.0-6
-  resolution: "@logion/node-api@npm:0.13.0-6"
+"@logion/node-api@npm:^0.14.0-4":
+  version: 0.14.0-4
+  resolution: "@logion/node-api@npm:0.14.0-4"
   dependencies:
     "@polkadot/api": ^10.4.1
     "@polkadot/util": ^12.0.1
@@ -1737,7 +1737,7 @@ __metadata:
     "@types/uuid": ^8.3.4
     fast-sha256: ^1.3.0
     uuid: ^8.3.2
-  checksum: 8ab045db5feb1e2da7e8dac968c87086046f1cbcaed4591b96b751aef84d3cdc4c42331c48627db1af2a819142661abd301c7e128946a4b45c2d6253673129f8
+  checksum: c60fa32f15f94eb4f9f8ff75aea5d84ecb634dac6eefd07409baa35cb0c332051182c8da44dd0a9ab5fa87e697c3a49293ef48f7658e13966b0905c6f04b0aa7
   languageName: node
   linkType: hard
 
@@ -1747,7 +1747,7 @@ __metadata:
   dependencies:
     "@istanbuljs/nyc-config-typescript": ^1.0.2
     "@logion/authenticator": ^0.5.1-1
-    "@logion/node-api": ^0.13.0-6
+    "@logion/node-api": ^0.14.0-4
     "@tsconfig/node16": ^1.0.3
     "@types/express": ^4.17.14
     "@types/express-fileupload": ^1.4.1
