@@ -13,7 +13,7 @@ const CONFIG_FILE = "ormconfig.json";
 
 export let appDataSource = buildDefaultDataSource();
 
-function buildDefaultDataSource(): DataSource {
+export function buildDefaultDataSource(): DataSource {
     const options = buildDefaultDataSourceOptions();
     const dataSource = new DataSource(options);
     initializeTransactionalContext();
@@ -21,8 +21,8 @@ function buildDefaultDataSource(): DataSource {
     return dataSource;
 }
 
-function buildDefaultDataSourceOptions(): DataSourceOptions {
-    const fileConfig = getFileConfig();
+export function buildDefaultDataSourceOptions(): DataSourceOptions {
+    const fileConfig = getFileConfig(CONFIG_FILE);
     const envConfig = getEnvConfig();
     const config = {
         ...fileConfig,
@@ -39,16 +39,29 @@ function buildDefaultDataSourceOptions(): DataSourceOptions {
     return config;
 }
 
-function getFileConfig(): any { // eslint-disable-line @typescript-eslint/no-explicit-any
-    if(existsSync(CONFIG_FILE)) {
-        const content = readFileSync(CONFIG_FILE);
-        return JSON.parse(content.toString("utf-8"));
+export function getFileConfig(path: string): any { // eslint-disable-line @typescript-eslint/no-explicit-any
+    if(existsSync(path)) {
+        const content = readFileSync(path);
+        const config = JSON.parse(content.toString("utf-8"));
+        validateConfig(config);
+        return config;
     } else {
         return {};
     }
 }
 
-function getEnvConfig(): any { // eslint-disable-line @typescript-eslint/no-explicit-any
+function validateConfig(config: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+    ensureBoolean(config, "synchronize");
+    ensureBoolean(config, "logging");
+}
+
+function ensureBoolean(config: any, field: string) { // eslint-disable-line @typescript-eslint/no-explicit-any
+    if(field in config && typeof config[field] !== "boolean") {
+        throw new Error(`Unexpected type for ${field}`);
+    }
+}
+
+export function getEnvConfig(): any { // eslint-disable-line @typescript-eslint/no-explicit-any
     const options: any = {}; // eslint-disable-line @typescript-eslint/no-explicit-any
     setFromEnvIfDefined(options, "TYPEORM_CONNECTION", "type");
     setFromEnvIfDefined(options, "TYPEORM_HOST", "host");
@@ -56,10 +69,11 @@ function getEnvConfig(): any { // eslint-disable-line @typescript-eslint/no-expl
     setFromEnvIfDefined(options, "TYPEORM_USERNAME", "username");
     setFromEnvIfDefined(options, "TYPEORM_PASSWORD", "password");
     setFromEnvIfDefined(options, "TYPEORM_DATABASE", "database");
-    setFromEnvIfDefined(options, "TYPEORM_SYNCHRONIZE", "synchronize");
-    setFromEnvIfDefined(options, "TYPEORM_ENTITIES", "entities", value => [ value ]);
-    setFromEnvIfDefined(options, "TYPEORM_MIGRATIONS", "migrations", value => [ value ]);
-    setFromEnvIfDefined(options, "TYPEORM_LOGGING", "logging");
+    setFromEnvIfDefined(options, "TYPEORM_SYNCHRONIZE", "synchronize", transformToBoolean);
+    setFromEnvIfDefined(options, "TYPEORM_ENTITIES", "entities", transformToArrayOfString);
+    setFromEnvIfDefined(options, "TYPEORM_MIGRATIONS", "migrations", transformToArrayOfString);
+    setFromEnvIfDefined(options, "TYPEORM_LOGGING", "logging", transformToBoolean);
+    validateConfig(options);
     return options;
 }
 
@@ -68,6 +82,14 @@ function setFromEnvIfDefined(options: any, envName: string, optionName: string, 
     if(envValue) {
         options[optionName] = transform !== undefined ? transform(envValue) : envValue;
     }
+}
+
+function transformToBoolean(value: string): boolean {
+    return value === "true";
+}
+
+function transformToArrayOfString(value: string): string[] {
+    return [ value ];
 }
 
 export function overrideDataSource(dataSource: DataSource) {
