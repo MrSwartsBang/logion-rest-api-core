@@ -1,6 +1,6 @@
 {
   "name": "@logion/rest-api-core",
-  "version": "0.4.3-3",
+  "version": "0.4.3",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/logion-network/logion-rest-api-core.git"
@@ -26,7 +26,7 @@
     "coverage": "nyc yarn run test"
   },
   "dependencies": {
-    "@logion/authenticator": "^0.5.2-3",
+    "@logion/authenticator": "^0.5.2",
     "dinoloop": "^2.4.0",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",
